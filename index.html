@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Vivek Silawat — Video Editor and Motion Graphics Designer at MotionFlowX.">
+<meta name="theme-color" content="#09090a">
+<title>Vivek Silawat — MotionFlowX</title>
+<style>
+:root{
+  --bg:#070708;
+  --bg2:#0d0d10;
+  --panel:rgba(255,255,255,.055);
+  --panel-strong:rgba(255,255,255,.09);
+  --text:#f7f6f2;
+  --muted:#a8a8b0;
+  --line:rgba(255,255,255,.12);
+  --accent:#ff7a00;
+  --accent2:#ffb15e;
+  --max:1240px;
+  --radius:28px;
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;color:var(--text);font-family:Inter,Arial,Helvetica,sans-serif;
+  background:
+    radial-gradient(circle at 85% 7%,rgba(255,122,0,.18),transparent 26%),
+    radial-gradient(circle at 12% 90%,rgba(255,122,0,.08),transparent 30%),
+    linear-gradient(180deg,#09090a,#060607);
+  overflow-x:hidden;
+}
+body.loading{overflow:hidden}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+button{font:inherit}
+::selection{background:var(--accent);color:#111}
+.container{width:min(calc(100% - 36px),var(--max));margin:auto}
+.section{padding:120px 0;border-top:1px solid var(--line);position:relative}
+.label{
+  display:flex;align-items:center;gap:12px;font-size:.72rem;letter-spacing:.22em;
+  text-transform:uppercase;color:#ddd;margin-bottom:24px
+}
+.label:before{content:"";width:36px;height:1px;background:var(--accent)}
+h1,h2,h3,p{margin-top:0}
+h1{
+  font-size:clamp(4rem,10vw,9.5rem);line-height:.82;letter-spacing:-.075em;
+  text-transform:uppercase;margin-bottom:28px
+}
+h2{
+  font-size:clamp(2.7rem,6vw,5.8rem);line-height:.92;letter-spacing:-.06em;margin:0
+}
+h3{font-size:clamp(1.35rem,2vw,2rem);margin:0}
+p{color:var(--muted);line-height:1.72}
+.noise{
+  position:fixed;inset:0;pointer-events:none;z-index:90;opacity:.035;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E")
+}
+#spotlight{
+  position:fixed;left:0;top:0;width:420px;height:420px;border-radius:50%;
+  pointer-events:none;z-index:-1;transform:translate(-50%,-50%);
+  background:radial-gradient(circle,rgba(255,122,0,.15),transparent 67%);
+  filter:blur(8px)
+}
+.preloader{
+  position:fixed;inset:0;z-index:100;background:#070708;display:grid;place-items:center;
+  transition:opacity .7s var(--ease),visibility .7s
+}
+.preloader.hide{opacity:0;visibility:hidden}
+.pre-inner{text-align:center;width:min(420px,80vw)}
+.pre-logo{width:118px;height:118px;object-fit:contain;margin:0 auto 22px;animation:pulse 1.5s infinite}
+.pre-title{font-weight:900;letter-spacing:.16em;text-transform:uppercase}
+.pre-bar{height:2px;background:rgba(255,255,255,.1);margin-top:22px;overflow:hidden}
+.pre-bar span{display:block;height:100%;width:0;background:var(--accent);animation:load 1.5s forwards}
+@keyframes load{to{width:100%}}
+@keyframes pulse{50%{transform:scale(1.06);filter:drop-shadow(0 0 22px rgba(255,122,0,.38))}}
+
+.cursor-dot,.cursor-ring{
+  position:fixed;left:0;top:0;pointer-events:none;z-index:120;border-radius:50%;
+  transform:translate(-50%,-50%);mix-blend-mode:difference
+}
+.cursor-dot{width:7px;height:7px;background:#fff}
+.cursor-ring{width:34px;height:34px;border:1px solid rgba(255,255,255,.85);transition:width .25s,height .25s,opacity .25s}
+.cursor-ring.active{width:58px;height:58px;opacity:.55}
+
+.nav-wrap{
+  position:fixed;top:16px;left:0;right:0;z-index:50;pointer-events:none
+}
+.nav{
+  pointer-events:auto;width:min(calc(100% - 30px),1180px);margin:auto;height:74px;
+  display:flex;align-items:center;justify-content:space-between;padding:0 18px;
+  border:1px solid rgba(255,255,255,.14);border-radius:24px;
+  background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.035));
+  backdrop-filter:blur(22px) saturate(150%);
+  -webkit-backdrop-filter:blur(22px) saturate(150%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 20px 60px rgba(0,0,0,.25)
+}
+.brand{display:flex;align-items:center;gap:12px;font-weight:850;letter-spacing:.02em}
+.brand img{width:50px;height:50px;object-fit:contain}
+.brand small{display:block;color:var(--muted);font-size:.62rem;letter-spacing:.18em;font-weight:500}
+.nav-links{display:flex;gap:26px;font-size:.88rem}
+.nav-links a{color:#ddd;transition:.25s}
+.nav-links a:hover{color:var(--accent)}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:13px 20px;border:1px solid var(--line);border-radius:999px;
+  transition:.3s var(--ease);position:relative;overflow:hidden
+}
+.btn:before{
+  content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent,rgba(255,255,255,.15),transparent);
+  transform:translateX(-120%);transition:.5s
+}
+.btn:hover:before{transform:translateX(120%)}
+.btn:hover{transform:translateY(-3px)}
+.btn.primary{background:var(--accent);color:#111;border-color:var(--accent);font-weight:850}
+.hamb{display:none;background:none;border:0;color:#fff;font-size:1.7rem}
+
+.hero{min-height:100vh;padding:145px 0 65px;display:grid;align-items:center}
+.hero-grid{display:grid;grid-template-columns:1.12fr .88fr;gap:72px;align-items:end}
+.status{
+  display:inline-flex;align-items:center;gap:10px;font-size:.72rem;letter-spacing:.16em;
+  text-transform:uppercase;margin-bottom:28px
+}
+.status:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 18px var(--accent)}
+.hero-copy{max-width:680px;font-size:1.08rem}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px}
+.portrait{
+  position:relative;border-radius:34px;overflow:hidden;min-height:620px;
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.15);
+  box-shadow:0 40px 120px rgba(0,0,0,.5);transform-style:preserve-3d
+}
+.portrait:before{
+  content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:linear-gradient(145deg,rgba(255,255,255,.14),transparent 38%,transparent 70%,rgba(255,122,0,.1))
+}
+.portrait img{width:100%;height:100%;min-height:620px;object-fit:cover}
+.hero-tag{
+  position:absolute;z-index:3;left:20px;bottom:18px;background:rgba(0,0,0,.55);
+  backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:999px;padding:10px 14px;
+  font-size:.65rem;letter-spacing:.16em;text-transform:uppercase
+}
+.hero-foot{
+  grid-column:1/-1;display:flex;justify-content:space-between;color:#76767e;
+  font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;margin-top:20px
+}
+
+.about-grid,.career-grid{display:grid;grid-template-columns:.75fr 1.25fr;gap:92px}
+.about-copy{font-size:clamp(1.15rem,2vw,1.55rem);color:#ddd}
+.skills{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:42px;position:relative}
+.skills:before{
+  content:"";position:absolute;inset:-10%;background:radial-gradient(circle,rgba(255,122,0,.1),transparent 70%);
+  filter:blur(40px);pointer-events:none
+}
+.glass{
+  position:relative;overflow:hidden;border-radius:var(--radius);padding:30px;
+  background:linear-gradient(145deg,rgba(255,255,255,.13),rgba(255,255,255,.035));
+  border:1px solid rgba(255,255,255,.18);
+  backdrop-filter:blur(22px) saturate(155%);-webkit-backdrop-filter:blur(22px) saturate(155%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 24px 70px rgba(0,0,0,.28);
+  transition:.4s var(--ease)
+}
+.glass:before{
+  content:"";position:absolute;width:70%;height:70%;left:-18%;top:-35%;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.22),transparent 68%);filter:blur(10px)
+}
+.glass:hover{transform:translateY(-8px);border-color:rgba(255,255,255,.3)}
+.glass h3,.glass span{position:relative;z-index:1}
+.glass span{display:block;padding:12px 0;border-top:1px solid rgba(255,255,255,.12);color:#f2f2ef}
+
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:32px;margin-bottom:50px}
+.section-head p{max-width:540px;margin-bottom:0}
+.projects{display:grid;grid-template-columns:repeat(2,1fr);gap:26px}
+.project{
+  background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:30px;
+  overflow:hidden;transition:.45s var(--ease);transform-style:preserve-3d
+}
+.project:hover{border-color:rgba(255,122,0,.45);box-shadow:0 30px 90px rgba(0,0,0,.35)}
+.project-visual{aspect-ratio:16/10;position:relative;display:grid;place-items:center;overflow:hidden}
+.tone-1,.tone-4{background:radial-gradient(circle at 75% 20%,#943800,transparent 36%),#131316}
+.tone-2,.tone-5{background:radial-gradient(circle at 75% 20%,#5d1600,transparent 36%),#131316}
+.tone-3,.tone-6{background:radial-gradient(circle at 75% 20%,#463000,transparent 36%),#131316}
+.logo-plate{
+  width:76%;height:68%;display:grid;place-items:center;padding:22px;border-radius:28px;
+  background:linear-gradient(145deg,rgba(255,255,255,.90),rgba(235,235,235,.72));
+  border:1px solid rgba(255,255,255,.45);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.65),0 25px 80px rgba(0,0,0,.28);
+  transition:.5s var(--ease);
+  overflow:hidden
+}
+.project:hover .logo-plate{transform:scale(1.04) rotate(-1deg)}
+.logo-plate img{
+  width:auto;height:auto;max-width:88%;max-height:82%;object-fit:contain
+}
+.project:nth-child(1) .logo-plate img{max-width:82%;max-height:72%}
+.project:nth-child(2) .logo-plate img{max-width:80%;max-height:76%}
+.project:nth-child(3) .logo-plate img{max-width:78%;max-height:74%}
+.project:nth-child(4) .logo-plate img{max-width:70%;max-height:70%}
+.project:nth-child(5) .logo-plate img{max-width:78%;max-height:74%}
+.project:nth-child(6) .logo-plate img{max-width:76%;max-height:72%}
+.play{
+  position:absolute;right:20px;bottom:20px;width:56px;height:56px;border-radius:50%;
+  display:grid;place-items:center;background:rgba(9,9,10,.8);border:1px solid var(--line);
+  opacity:0;transform:translateY(10px);transition:.3s
+}
+.project:hover .play{opacity:1;transform:none}
+.project-info{padding:26px 28px 32px}
+.meta{
+  display:flex;justify-content:space-between;color:var(--accent);font-size:.68rem;
+  letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px
+}
+
+.clients-wrap{
+  overflow:hidden;margin-top:46px;
+  mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)
+}
+.track{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  width:max-content;
+  gap:20px;
+  min-height:150px;
+  animation:marquee 38s linear infinite;
+}
+.track:hover{animation-play-state:paused}
+@keyframes marquee{to{transform:translateX(-50%)}}
+.client{
+  width:240px;
+  height:150px;
+  flex:0 0 240px;
+  display:grid;
+  place-items:center;
+  padding:0;
+  margin:0;
+  overflow:hidden;
+  background:transparent;
+  border-radius:22px;
+  border:1px solid transparent;
+  transition:.35s ease;
+}
+.client img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:center center;
+  margin:0 auto;
+  padding:14px;
+  filter:grayscale(1);
+  opacity:.42;
+  transform-origin:center center;
+  transition:.35s ease;
+}
+.client:hover,.client.touched{border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.025)}
+.client:hover img,.client.touched img{filter:grayscale(0);opacity:1;transform:scale(1.05)}
+
+.timeline{border-top:1px solid var(--line)}
+.job{display:grid;grid-template-columns:170px 1fr;gap:30px;padding:38px 0;border-bottom:1px solid var(--line)}
+.job time{color:var(--accent)}
+.job ul{padding-left:18px;color:var(--muted);line-height:1.8}
+
+.contact-card{
+  position:relative;overflow:hidden;border-radius:38px;padding:clamp(38px,7vw,92px);
+  background:linear-gradient(135deg,#ff7a00,#ff9a3d);color:#111
+}
+.contact-card:before{
+  content:"";position:absolute;width:480px;height:480px;right:-160px;top:-180px;border-radius:50%;
+  background:rgba(255,255,255,.22);filter:blur(10px)
+}
+.contact-card h2,.contact-card p,.contact-actions{position:relative;z-index:1}
+.contact-card p{color:rgba(0,0,0,.68);max-width:650px;font-size:1.08rem}
+.contact-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
+.contact-card .btn{border-color:rgba(0,0,0,.22);font-weight:850}
+.contact-card .btn.primary{background:#111;color:#fff;border-color:#111}
+footer{padding:30px 0 46px;color:#777780}
+.footer-row{display:flex;justify-content:space-between;gap:20px;border-top:1px solid var(--line);padding-top:28px}
+
+.reveal{opacity:0;transform:translateY(34px);transition:.85s var(--ease)}
+.reveal.visible{opacity:1;transform:none}
+.split-word{display:inline-block;overflow:hidden;vertical-align:bottom}
+.split-word span{display:inline-block;transform:translateY(110%);animation:wordIn .9s var(--ease) forwards}
+@keyframes wordIn{to{transform:none}}
+
+@media(max-width:900px){
+  .nav-links{
+    position:fixed;top:98px;left:15px;right:15px;display:none;flex-direction:column;
+    align-items:flex-start;padding:24px;border-radius:24px;background:rgba(10,10,12,.92);
+    border:1px solid var(--line);backdrop-filter:blur(18px)
+  }
+  .nav-links.open{display:flex}.hamb{display:block}.nav .btn.primary{display:none}
+  .hero-grid,.about-grid,.career-grid{grid-template-columns:1fr;gap:52px}
+  .portrait,.portrait img{min-height:520px}
+  .projects{grid-template-columns:1fr}.section-head{display:block}.section-head p{margin-top:18px}
+  .job{grid-template-columns:1fr;gap:8px}
+}
+@media(max-width:560px){
+  .section{padding:86px 0}.hero{padding-top:126px}.portrait,.portrait img{min-height:470px}
+  .skills{grid-template-columns:1fr}.footer-row{flex-direction:column}
+  .cursor-dot,.cursor-ring{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}.reveal{opacity:1;transform:none}.track{animation:none}
+  *{transition:none!important}
+}
+
+@media(max-width:560px){
+  .project-visual{aspect-ratio:16/11}
+  .logo-plate{width:74%;height:62%;padding:16px;border-radius:22px}
+  .project:nth-child(1) .logo-plate img{max-width:90%;max-height:78%}
+  .project:nth-child(2) .logo-plate img{max-width:84%;max-height:80%}
+  .project:nth-child(3) .logo-plate img{max-width:82%;max-height:78%}
+  .project:nth-child(4) .logo-plate img{max-width:78%;max-height:76%}
+}
+
+
+max-width:92%;max-height:82%}  /* Shrishva */
+  /* Edge */
+  /* Sagar */
+  /* Light Gallery */
+  /* Shining Star */
+  /* GVI */
+  /* Polyframe */
+  /* Bee */
+  /* My Chhota School */
+ /* Saroj */
+ /* SVJ */
+
+/* duplicated marquee items */
+
+
+
+
+
+
+
+
+
+
+
+
+@media(max-width:560px){
+  .client{width:210px;height:132px;padding:14px}
+  .track{min-height:148px;gap:14px}
+}
+
+
+@media(max-width:560px){
+  .client{
+    width:210px;
+    height:132px;
+    flex-basis:210px;
+  }
+  .client img{
+    width:100%;
+    height:100%;
+    padding:12px;
+    object-fit:contain;
+    object-position:center center;
+  }
+  .track{
+    min-height:132px;
+    gap:14px;
+  }
+}
+
+</style>
+</head>
+<body class="loading">
+<div class="noise"></div>
+<div id="spotlight"></div>
+<div class="cursor-dot"></div><div class="cursor-ring"></div>
+
+<div class="preloader" id="preloader">
+  <div class="pre-inner">
+    <img class="pre-logo" src="assets/logos/motionflowx.webp" alt="MotionFlowX logo">
+    <div class="pre-title">MotionFlowX</div>
+    <div class="pre-bar"><span></span></div>
+  </div>
+</div>
+
+<div class="nav-wrap">
+  <nav class="nav">
+    <a class="brand magnetic" href="#home">
+      <img src="assets/logos/motionflowx.webp" alt="MotionFlowX logo">
+      <span>MotionFlowX<small>Vivek Silawat</small></span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="#about">About</a><a href="#portfolio">Portfolio</a>
+      <a href="#clients">Clients</a><a href="#career">Career</a><a href="#contact">Contact</a>
+    </div>
+    <a class="btn primary magnetic" href="#contact">Let's Work</a>
+    <button class="hamb" id="hamb" aria-label="Open menu">☰</button>
+  </nav>
+</div>
+
+<main class="hero container" id="home">
+  <div class="hero-grid">
+    <section class="reveal">
+      <div class="status">Available for freelance projects</div>
+      <h1 class="hero-title">Vivek<br>Silawat</h1>
+      <p class="hero-copy">Video Editor & Motion Graphics Designer creating polished reels, advertisements and visual stories for brands, creators and businesses.</p>
+      <div class="hero-actions">
+        <a class="btn primary magnetic" href="#portfolio">View Work</a>
+        <a class="btn magnetic" href="#contact">Let's Talk</a>
+      </div>
+    </section>
+    <div class="portrait reveal tilt">
+      <img src="assets/images/vivek-silawat.webp" alt="Vivek Silawat, video editor and motion graphics designer">
+      <div class="hero-tag">● REC &nbsp; CUT.01 — PORTFOLIO</div>
+    </div>
+    <div class="hero-foot"><span>MotionFlowX / 2026</span><span>Scroll ↓</span></div>
+  </div>
+</main>
+
+<section class="section" id="about">
+  <div class="container about-grid">
+    <div class="reveal"><div class="label">Profile</div><h2>About Me</h2></div>
+    <div class="reveal">
+      <p class="about-copy">I’m a video editor and motion graphics designer focused on short-form reels, UGC advertisements, documentary edits and AI-powered commercial content. I transform raw footage and ideas into clean, engaging and platform-ready visual experiences.</p>
+      <div class="skills">
+        <div class="glass tilt"><h3>Capabilities</h3>
+          <span>Short-form Reel Editing</span><span>UGC Advertisements</span>
+          <span>Motion Graphics</span><span>Documentary Editing</span>
+          <span>AI Product Commercials</span><span>Brand Promo Videos</span>
+        </div>
+        <div class="glass tilt"><h3>Software</h3>
+          <span>Adobe After Effects</span><span>Adobe Premiere Pro</span><span>Adobe Photoshop</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="portfolio">
+  <div class="container">
+    <div class="section-head reveal">
+      <div><div class="label">Showreels</div><h2>Selected Work</h2></div>
+      <p>Featured client projects. Each card opens the relevant Google Drive folder in a new tab.</p>
+    </div>
+    <div class="projects">
+      <a class="project reveal tilt" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1pHM8UqtbuJfLPJsYowmLzdiqVBEPYJgu?usp=sharing">
+        <div class="project-visual tone-1"><div class="logo-plate"><img src="assets/logos/shrishva-ayurveda.webp" alt="Shrishva Ayurveda logo"></div><span class="play">▶</span></div>
+        <div class="project-info"><div class="meta"><span>AI Product Advertisement</span><span>01</span></div><h3>Shrishva Ayurveda</h3><p>Ayurvedic product reels with cinematic AI visuals and premium editing.</p></div>
+      </a>
+      <a class="project reveal tilt" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1HBow_HowERRCO8eY4Lp3JL5154R0TxZX?usp=sharing">
+        <div class="project-visual tone-2"><div class="logo-plate"><img src="assets/logos/edge-modular.webp" alt="Edge Modulars logo"></div><span class="play">▶</span></div>
+        <div class="project-info"><div class="meta"><span>UGC Brand Advertisement</span><span>02</span></div><h3>Edge Modulars Pvt. Ltd.</h3><p>Hinglish UGC ads for modular kitchen and interior solutions.</p></div>
+      </a>
+      <a class="project reveal tilt" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1ULzVjB1HmKe_zk12d7jkrI8Ml79Cn89_?usp=sharing">
+        <div class="project-visual tone-3"><div class="logo-plate"><img src="assets/logos/sagar-classes.webp" alt="Sagar Classes logo"></div><span class="play">▶</span></div>
+        <div class="project-info"><div class="meta"><span>Education Campaign</span><span>03</span></div><h3>Sagar Classes</h3><p>Admission and classroom promotional reels for an education brand.</p></div>
+      </a>
+      <a class="project reveal tilt" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1W4LF-nQ9-dxxdJwmMCvo5Arxetc-JZ7l?usp=sharing">
+        <div class="project-visual tone-4"><div class="logo-plate"><img src="assets/logos/light-gallery.webp" alt="Light Gallery logo"></div><span class="play">▶</span></div>
+        <div class="project-info"><div class="meta"><span>Luxury Product Reel</span><span>04</span></div><h3>Light Gallery</h3><p>Premium showcase reels for decorative and luxury lighting products.</p></div>
+      </a>
+      <a class="project reveal tilt" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/12vFa3dVtuassWkow0nKxMlbCG67Z7Wer?usp=sharing">
+        <div class="project-visual tone-5"><div class="logo-plate"><img src="assets/logos/shining-star.webp" alt="Shining Star logo"></div><span class="play">▶</span></div>
+        <div class="project-info"><div class="meta"><span>Interior Brand Campaign</span><span>05</span></div><h3>Shining Star</h3><p>Luxury modular kitchen and interior-design advertisement edits.</p></div>
+      </a>
+      <a class="project reveal tilt" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1sQKvy9TT38uc0kv6Ekw18VrI-9hyVPwS?usp=sharing">
+        <div class="project-visual tone-6"><div class="logo-plate"><img src="assets/logos/globistic-view-india.webp" alt="Globistic View India logo"></div><span class="play">▶</span></div>
+        <div class="project-info"><div class="meta"><span>Digital Marketing UGC</span><span>06</span></div><h3>Globistic View India</h3><p>Corporate UGC campaigns focused on digital marketing services.</p></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="clients">
+  <div class="container reveal"><div class="label">Collaborations</div><h2>Trusted By</h2></div>
+  <div class="clients-wrap">
+    <div class="track" id="track">
+      <div class="client"><img src="assets/logos/shrishva-ayurveda.webp" alt="Shrishva Ayurveda logo"></div>
+      <div class="client"><img src="assets/logos/edge-modular.webp" alt="Edge Modulars logo"></div>
+      <div class="client"><img src="assets/logos/sagar-classes.webp" alt="Sagar Classes logo"></div>
+      <div class="client"><img src="assets/logos/light-gallery.webp" alt="Light Gallery logo"></div>
+      <div class="client"><img src="assets/logos/shining-star.webp" alt="Shining Star logo"></div>
+      <div class="client"><img src="assets/logos/globistic-view-india.webp" alt="Globistic View India logo"></div>
+      <div class="client"><img src="assets/logos/polyframe-academy.webp" alt="PolyFrame Academy logo"></div>
+      <div class="client"><img src="assets/logos/bee-animation.webp" alt="Bee Animation logo"></div>
+      <div class="client"><img src="assets/logos/my-chhota-school.webp" alt="My Chhota School logo"></div>
+      <div class="client"><img src="assets/logos/saroj-enterprises.webp" alt="Saroj Enterprises logo"></div>
+      <div class="client"><img src="assets/logos/svj-technocoat.webp" alt="SVJ Technocoat logo"></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="career">
+  <div class="container career-grid">
+    <div class="reveal"><div class="label">Experience</div><h2>Career</h2></div>
+    <div class="timeline reveal">
+      <article class="job">
+        <time>2025 — Present</time>
+        <div><h3>Freelance Video Editor & Motion Designer</h3><p>MotionFlowX</p>
+        <ul><li>Editing short-form social content, UGC advertisements and brand promos.</li><li>Creating motion graphics and AI-assisted visual campaigns.</li><li>Working across education, interiors, animation, industrial and digital-marketing projects.</li></ul></div>
+      </article>
+      <article class="job">
+        <time>Selected Clients</time>
+        <div><h3>Brand & Agency Collaborations</h3><p>Remote and project-based work</p>
+        <ul><li>Shrishva Ayurveda, Edge Modulars, Sagar Classes and Light Gallery.</li><li>Shining Star, Globistic View India, PolyFrame Academy and Bee Animation.</li><li>My Chhota School, Saroj Enterprises and SVJ Technocoat.</li></ul></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="contact">
+  <div class="container">
+    <div class="contact-card reveal">
+      <div class="label" style="color:#111">Get in touch</div>
+      <h2>Let’s create something people remember.</h2>
+      <p>Available for freelance projects, remote opportunities and creative collaborations.</p>
+      <div class="contact-actions">
+        <a class="btn primary magnetic" href="mailto:motionflowx.in@gmail.com">Email Me</a>
+        <a class="btn magnetic" target="_blank" rel="noopener" href="https://wa.me/918319773356">WhatsApp</a>
+        <a class="btn magnetic" target="_blank" rel="noopener" href="https://www.instagram.com/motionflowx/">Instagram</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer><div class="container footer-row"><span>© 2026 Vivek Silawat / MotionFlowX</span><span>Creativity in Every Frame</span></div></footer>
+
+<script>
+const preloader=document.getElementById('preloader');
+window.addEventListener('load',()=>setTimeout(()=>{preloader.classList.add('hide');document.body.classList.remove('loading')},900));
+
+const hamb=document.getElementById('hamb'),links=document.getElementById('navLinks');
+hamb.addEventListener('click',()=>links.classList.toggle('open'));
+links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>links.classList.remove('open')));
+
+const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+const title=document.querySelector('.hero-title');
+title.innerHTML=title.innerHTML.split(/(\s+|<br>)/).map(w=>{
+  if(w==='<br>')return '<br>';
+  if(/^\s+$/.test(w))return w;
+  return `<span class="split-word"><span>${w}</span></span>`;
+}).join('');
+
+const dot=document.querySelector('.cursor-dot'),ring=document.querySelector('.cursor-ring'),spot=document.getElementById('spotlight');
+let mx=0,my=0,rx=0,ry=0;
+window.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.left=mx+'px';dot.style.top=my+'px';spot.style.left=mx+'px';spot.style.top=my+'px'});
+function cursorLoop(){rx+=(mx-rx)*.16;ry+=(my-ry)*.16;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(cursorLoop)}
+cursorLoop();
+document.querySelectorAll('a,button,.project,.client').forEach(el=>{
+  el.addEventListener('mouseenter',()=>ring.classList.add('active'));
+  el.addEventListener('mouseleave',()=>ring.classList.remove('active'));
+});
+
+document.querySelectorAll('.magnetic').forEach(el=>{
+  el.addEventListener('mousemove',e=>{
+    const r=el.getBoundingClientRect(),x=e.clientX-r.left-r.width/2,y=e.clientY-r.top-r.height/2;
+    el.style.transform=`translate(${x*.12}px,${y*.12}px)`;
+  });
+  el.addEventListener('mouseleave',()=>el.style.transform='');
+});
+
+document.querySelectorAll('.tilt').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+    card.style.transform=`perspective(900px) rotateX(${-y*5}deg) rotateY(${x*6}deg) translateY(-4px)`;
+  });
+  card.addEventListener('mouseleave',()=>card.style.transform='');
+});
+
+const track=document.getElementById('track');
+track.innerHTML+=track.innerHTML;
+
+document.querySelectorAll('.client').forEach(card=>{
+  card.addEventListener('touchstart',()=>{
+    document.querySelectorAll('.client').forEach(c=>c.classList.remove('touched'));
+    card.classList.add('touched');
+  },{passive:true});
+});
+</script>
+</body>
+</html>
